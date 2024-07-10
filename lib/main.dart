@@ -55,6 +55,31 @@ class _SplitSobHomePageState extends State<SplitSobHomePage> {
     super.dispose();
   }
 
+  InputDecoration inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: secondaryText,
+        fontSize: 13,
+      ),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: primaryOrange, width: 1.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,8 +92,75 @@ class _SplitSobHomePageState extends State<SplitSobHomePage> {
           ),
         ),
       ),
-      body: const Center(
-        child: Text('Expense Splitter App'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Bagi Biaya, Jadi Mudah.',
+              style: GoogleFonts.poppins(
+                fontSize: 21,
+                fontWeight: FontWeight.w600,
+                color: darkText,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              'Hitung patungan bersama temanmu.',
+              style: GoogleFonts.plusJakartaSans(
+                color: secondaryText,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 25),
+            Text(
+              'Nama Pengeluaran',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: expenseController,
+              decoration: inputDecoration('Contoh: Makan malam'),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              'Total Pengeluaran',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: inputDecoration('Masukkan total biaya'),
+            ),
+            const SizedBox(height: 25),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryOrange,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: Text(
+                  'Hitung Patungan',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
