@@ -7,6 +7,7 @@ class ParticipantField extends StatelessWidget {
   final int nomor;
   final TextEditingController controller;
   final VoidCallback onHapus;
+  final VoidCallback onChanged;
   final InputDecoration Function(String) dekorasiInput;
 
   const ParticipantField({
@@ -14,6 +15,7 @@ class ParticipantField extends StatelessWidget {
     required this.nomor,
     required this.controller,
     required this.onHapus,
+    required this.onChanged,
     required this.dekorasiInput,
   });
 
@@ -44,6 +46,7 @@ class ParticipantField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              onChanged: (_) => onChanged(),
               textCapitalization: TextCapitalization.words,
               decoration: dekorasiInput('Nama peserta $nomor'),
             ),

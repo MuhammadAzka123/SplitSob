@@ -12,6 +12,13 @@ class SplitSobPage extends StatefulWidget {
   State<SplitSobPage> createState() => _SplitSobPageState();
 }
 
+class PembagianPeserta {
+  final String nama;
+  final int nominal;
+
+  const PembagianPeserta({required this.nama, required this.nominal});
+}
+
 class _SplitSobPageState extends State<SplitSobPage> {
   final TextEditingController expenseController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
@@ -20,6 +27,10 @@ class _SplitSobPageState extends State<SplitSobPage> {
     TextEditingController(),
     TextEditingController(),
   ];
+
+  List<PembagianPeserta>? hasilPembagian;
+  String namaPengeluaranHasil = '';
+  int totalPengeluaranHasil = 0;
 
   @override
   void dispose() {
@@ -58,9 +69,18 @@ class _SplitSobPageState extends State<SplitSobPage> {
     );
   }
 
+  void bersihkanHasil() {
+    if (hasilPembagian != null) {
+      setState(() {
+        hasilPembagian = null;
+      });
+    }
+  }
+
   void tambahPeserta() {
     setState(() {
       participantControllers.add(TextEditingController());
+      hasilPembagian = null;
     });
   }
 
@@ -74,6 +94,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
 
     setState(() {
       participantControllers.removeAt(index);
+      hasilPembagian = null;
     });
 
     controller.dispose();
@@ -96,8 +117,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
 
   bool validasiInput() {
     final pengeluaran = expenseController.text.trim();
-    final nominalText = amountController.text.trim();
-    final nominal = int.tryParse(nominalText);
+    final nominal = int.tryParse(amountController.text.trim());
 
     final namaPeserta = participantControllers
         .map((controller) => controller.text.trim())
@@ -123,9 +143,50 @@ class _SplitSobPageState extends State<SplitSobPage> {
       return false;
     }
 
-    tampilkanPesan('Data sudah lengkap dan siap dihitung.', berhasil: true);
-
     return true;
+  }
+
+  void hitungPatungan() {
+    if (!validasiInput()) {
+      return;
+    }
+
+    final total = int.parse(amountController.text.trim());
+
+    final namaPeserta = participantControllers
+        .map((controller) => controller.text.trim())
+        .toList();
+
+    final jumlahPeserta = namaPeserta.length;
+    final bagianDasar = total ~/ jumlahPeserta;
+    final sisaPembagian = total % jumlahPeserta;
+
+    final hasil = List.generate(
+      jumlahPeserta,
+      (index) => PembagianPeserta(
+        nama: namaPeserta[index],
+        nominal: bagianDasar + (index < sisaPembagian ? 1 : 0),
+      ),
+    );
+
+    setState(() {
+      namaPengeluaranHasil = expenseController.text.trim();
+      totalPengeluaranHasil = total;
+      hasilPembagian = hasil;
+    });
+
+    tampilkanPesan('Pembagian patungan berhasil dihitung.', berhasil: true);
+  }
+
+  String formatRupiah(int nominal) {
+    final angka = nominal.toString();
+
+    final hasil = angka.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => '.',
+    );
+
+    return 'Rp $hasil';
   }
 
   Widget judulBagian(String judul) {
@@ -135,6 +196,87 @@ class _SplitSobPageState extends State<SplitSobPage> {
         fontWeight: FontWeight.w600,
         fontSize: 13,
         color: darkText,
+      ),
+    );
+  }
+
+  Widget buildHasilPerhitungan() {
+    final hasil = hasilPembagian!;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 25),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hasil Pembagian',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: darkText,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            namaPengeluaranHasil,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              color: secondaryText,
+            ),
+          ),
+          const SizedBox(height: 15),
+          Text(
+            'Total Pengeluaran',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              color: secondaryText,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            formatRupiah(totalPengeluaranHasil),
+            style: GoogleFonts.poppins(
+              fontSize: 21,
+              fontWeight: FontWeight.w700,
+              color: primaryDark,
+            ),
+          ),
+          const Divider(height: 25, color: borderColor),
+          ...hasil.map(
+            (peserta) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 9),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      peserta.nama,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: darkText,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    formatRupiah(peserta.nominal),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: primaryDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -180,6 +322,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
               const SizedBox(height: 8),
               TextField(
                 controller: expenseController,
+                onChanged: (_) => bersihkanHasil(),
                 textCapitalization: TextCapitalization.sentences,
                 decoration: dekorasiInput('Contoh: Makan malam'),
               ),
@@ -188,6 +331,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
               const SizedBox(height: 8),
               TextField(
                 controller: amountController,
+                onChanged: (_) => bersihkanHasil(),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: dekorasiInput('Masukkan total biaya'),
@@ -222,6 +366,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
                   nomor: index + 1,
                   controller: participantControllers[index],
                   onHapus: () => hapusPeserta(index),
+                  onChanged: bersihkanHasil,
                   dekorasiInput: dekorasiInput,
                 ),
               ),
@@ -252,7 +397,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: validasiInput,
+                  onPressed: hitungPatungan,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryDark,
                     foregroundColor: Colors.white,
@@ -269,6 +414,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
                   ),
                 ),
               ),
+              if (hasilPembagian != null) buildHasilPerhitungan(),
             ],
           ),
         ),
