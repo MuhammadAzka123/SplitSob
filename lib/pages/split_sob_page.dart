@@ -4,19 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../themes/app_colors.dart';
 import '../widgets/participant_field.dart';
+import '../widgets/expense_summary.dart';
 
 class SplitSobPage extends StatefulWidget {
   const SplitSobPage({super.key});
 
   @override
   State<SplitSobPage> createState() => _SplitSobPageState();
-}
-
-class PembagianPeserta {
-  final String nama;
-  final int nominal;
-
-  const PembagianPeserta({required this.nama, required this.nominal});
 }
 
 class _SplitSobPageState extends State<SplitSobPage> {
@@ -178,17 +172,6 @@ class _SplitSobPageState extends State<SplitSobPage> {
     tampilkanPesan('Pembagian patungan berhasil dihitung.', berhasil: true);
   }
 
-  String formatRupiah(int nominal) {
-    final angka = nominal.toString();
-
-    final hasil = angka.replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-      (match) => '.',
-    );
-
-    return 'Rp $hasil';
-  }
-
   Widget judulBagian(String judul) {
     return Text(
       judul,
@@ -196,87 +179,6 @@ class _SplitSobPageState extends State<SplitSobPage> {
         fontWeight: FontWeight.w600,
         fontSize: 13,
         color: darkText,
-      ),
-    );
-  }
-
-  Widget buildHasilPerhitungan() {
-    final hasil = hasilPembagian!;
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 25),
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Hasil Pembagian',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: darkText,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            namaPengeluaranHasil,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              color: secondaryText,
-            ),
-          ),
-          const SizedBox(height: 15),
-          Text(
-            'Total Pengeluaran',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              color: secondaryText,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            formatRupiah(totalPengeluaranHasil),
-            style: GoogleFonts.poppins(
-              fontSize: 21,
-              fontWeight: FontWeight.w700,
-              color: primaryDark,
-            ),
-          ),
-          const Divider(height: 25, color: borderColor),
-          ...hasil.map(
-            (peserta) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      peserta.nama,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: darkText,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    formatRupiah(peserta.nominal),
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: primaryDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -414,7 +316,14 @@ class _SplitSobPageState extends State<SplitSobPage> {
                   ),
                 ),
               ),
-              if (hasilPembagian != null) buildHasilPerhitungan(),
+              if (hasilPembagian != null) ...[
+                const SizedBox(height: 25),
+                ExpenseSummary(
+                  namaPengeluaran: namaPengeluaranHasil,
+                  totalPengeluaran: totalPengeluaranHasil,
+                  peserta: hasilPembagian!,
+                ),
+              ],
             ],
           ),
         ),

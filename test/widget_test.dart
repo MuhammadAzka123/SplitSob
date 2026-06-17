@@ -26,7 +26,7 @@ void main() {
     expect(find.text('3 Orang'), findsOneWidget);
   });
 
-  testWidgets('Hitung patungan membagi biaya dengan benar', (
+  testWidgets('Hasil pembagian biaya ditampilkan dengan benar', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const SplitSobApp());
@@ -43,14 +43,19 @@ void main() {
     await tester.tap(find.text('Tambah Peserta'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField).at(4), 'Citra');
+    await tester.ensureVisible(find.byType(TextField).last);
+    await tester.enterText(find.byType(TextField).last, 'Citra');
 
     await tester.ensureVisible(find.text('Hitung Patungan'));
     await tester.tap(find.text('Hitung Patungan'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Hasil Pembagian'), findsOneWidget);
+    expect(find.text('Ringkasan Patungan'), findsOneWidget);
+    expect(find.text('Makan malam'), findsNWidgets(2));
     expect(find.text('Rp 100.000'), findsOneWidget);
+    expect(find.text('Azka'), findsNWidgets(2));
+    expect(find.text('Budi'), findsNWidgets(2));
+    expect(find.text('Citra'), findsNWidgets(2));
     expect(find.text('Rp 33.334'), findsOneWidget);
     expect(find.text('Rp 33.333'), findsNWidgets(2));
   });
