@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../themes/app_colors.dart';
 import '../widgets/participant_field.dart';
 import '../widgets/expense_summary.dart';
@@ -47,7 +46,10 @@ class _SplitSobPageState extends State<SplitSobPage> {
       ),
       filled: true,
       fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 14,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: borderColor),
@@ -58,7 +60,10 @@ class _SplitSobPageState extends State<SplitSobPage> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: primaryOrange, width: 1.5),
+        borderSide: const BorderSide(
+          color: primaryOrange,
+          width: 1.5,
+        ),
       ),
     );
   }
@@ -101,7 +106,9 @@ class _SplitSobPageState extends State<SplitSobPage> {
       SnackBar(
         content: Text(
           pesan,
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w500,
+          ),
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: berhasil ? successColor : unpaidColor,
@@ -169,7 +176,38 @@ class _SplitSobPageState extends State<SplitSobPage> {
       hasilPembagian = hasil;
     });
 
-    tampilkanPesan('Pembagian patungan berhasil dihitung.', berhasil: true);
+    tampilkanPesan(
+      'Pembagian patungan berhasil dihitung.',
+      berhasil: true,
+    );
+  }
+
+  void resetForm() {
+    FocusScope.of(context).unfocus();
+
+    final controllerTambahan = participantControllers.skip(2).toList();
+
+    setState(() {
+      expenseController.clear();
+      amountController.clear();
+
+      participantControllers[0].clear();
+      participantControllers[1].clear();
+      participantControllers.removeRange(2, participantControllers.length);
+
+      hasilPembagian = null;
+      namaPengeluaranHasil = '';
+      totalPengeluaranHasil = 0;
+    });
+
+    for (final controller in controllerTambahan) {
+      controller.dispose();
+    }
+
+    tampilkanPesan(
+      'Form patungan berhasil direset.',
+      berhasil: true,
+    );
   }
 
   Widget judulBagian(String judul) {
@@ -183,6 +221,94 @@ class _SplitSobPageState extends State<SplitSobPage> {
     );
   }
 
+  Widget buildHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: lightOrange,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFFE4CC),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bagi Biaya, Jadi Mudah.',
+                  style: GoogleFonts.poppins(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                    color: darkText,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Hitung patungan bersama temanmu.',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: secondaryText,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: const Icon(
+              Icons.call_split_rounded,
+              color: primaryDark,
+              size: 24,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildParticipantTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Daftar Peserta',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            color: darkText,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 5,
+          ),
+          decoration: BoxDecoration(
+            color: lightOrange,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '${participantControllers.length} Orang',
+            style: GoogleFonts.plusJakartaSans(
+              color: primaryDark,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,10 +318,26 @@ class _SplitSobPageState extends State<SplitSobPage> {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
             color: darkText,
+            fontSize: 21,
           ),
         ),
         backgroundColor: backgroundColor,
         surfaceTintColor: Colors.transparent,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: lightOrange,
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: const Icon(
+              Icons.receipt_long_outlined,
+              color: primaryDark,
+              size: 20,
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -203,22 +345,7 @@ class _SplitSobPageState extends State<SplitSobPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Bagi Biaya, Jadi Mudah.',
-                style: GoogleFonts.poppins(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w600,
-                  color: darkText,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                'Hitung patungan bersama temanmu.',
-                style: GoogleFonts.plusJakartaSans(
-                  color: secondaryText,
-                  fontSize: 12,
-                ),
-              ),
+              buildHeader(),
               const SizedBox(height: 25),
               judulBagian('Nama Pengeluaran'),
               const SizedBox(height: 8),
@@ -235,31 +362,13 @@ class _SplitSobPageState extends State<SplitSobPage> {
                 controller: amountController,
                 onChanged: (_) => bersihkanHasil(),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 decoration: dekorasiInput('Masukkan total biaya'),
               ),
               const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Daftar Peserta',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: darkText,
-                    ),
-                  ),
-                  Text(
-                    '${participantControllers.length} Orang',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: secondaryText,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
+              buildParticipantTitle(),
               const SizedBox(height: 12),
               ...List.generate(
                 participantControllers.length,
@@ -276,7 +385,11 @@ class _SplitSobPageState extends State<SplitSobPage> {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: tambahPeserta,
-                  icon: const Icon(Icons.add, color: primaryDark, size: 19),
+                  icon: const Icon(
+                    Icons.add,
+                    color: primaryDark,
+                    size: 19,
+                  ),
                   label: Text(
                     'Tambah Peserta',
                     style: GoogleFonts.plusJakartaSans(
@@ -298,20 +411,24 @@ class _SplitSobPageState extends State<SplitSobPage> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   onPressed: hitungPatungan,
+                  icon: const Icon(
+                    Icons.calculate_outlined,
+                    size: 19,
+                  ),
+                  label: Text(
+                    'Hitung Patungan',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryDark,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Hitung Patungan',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -322,6 +439,33 @@ class _SplitSobPageState extends State<SplitSobPage> {
                   namaPengeluaran: namaPengeluaranHasil,
                   totalPengeluaran: totalPengeluaranHasil,
                   peserta: hasilPembagian!,
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    key: const ValueKey('resetButton'),
+                    onPressed: resetForm,
+                    icon: const Icon(
+                      Icons.refresh_rounded,
+                      size: 19,
+                      color: primaryDark,
+                    ),
+                    label: Text(
+                      'Buat Patungan Baru',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: primaryDark,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: primaryOrange),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ],
