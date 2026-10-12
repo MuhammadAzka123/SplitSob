@@ -193,7 +193,10 @@ class _SplitSobPageState extends State<SplitSobPage> {
 
       participantControllers[0].clear();
       participantControllers[1].clear();
-      participantControllers.removeRange(2, participantControllers.length);
+      participantControllers.removeRange(
+        2,
+        participantControllers.length,
+      );
 
       hasilPembagian = null;
       namaPengeluaranHasil = '';
@@ -217,60 +220,6 @@ class _SplitSobPageState extends State<SplitSobPage> {
         fontWeight: FontWeight.w600,
         fontSize: 13,
         color: darkText,
-      ),
-    );
-  }
-
-  Widget buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: lightOrange,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFFFE4CC),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Bagi Biaya, Jadi Mudah.',
-                  style: GoogleFonts.poppins(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w600,
-                    color: darkText,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Hitung patungan bersama temanmu.',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: secondaryText,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: const Icon(
-              Icons.call_split_rounded,
-              color: primaryDark,
-              size: 24,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -323,21 +272,6 @@ class _SplitSobPageState extends State<SplitSobPage> {
         ),
         backgroundColor: backgroundColor,
         surfaceTintColor: Colors.transparent,
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 20),
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: lightOrange,
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: const Icon(
-              Icons.receipt_long_outlined,
-              color: primaryDark,
-              size: 20,
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -345,8 +279,6 @@ class _SplitSobPageState extends State<SplitSobPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildHeader(),
-              const SizedBox(height: 25),
               judulBagian('Nama Pengeluaran'),
               const SizedBox(height: 8),
               TextField(
