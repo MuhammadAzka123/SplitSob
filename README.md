@@ -13,3 +13,9 @@
 ## Bahasa dan Framework yang Digunakan
 - Flutter
 - Dart
+
+## Timeline Pengembangan
+
+- **2023**: Repository dibuat sebagai awal inisiasi proyek.
+- **Awal 2026**: Pengembangan proyek mulai dilakukan secara aktif.
+- **Pertengahan 2026**: Pengembangan aplikasi selesai.
