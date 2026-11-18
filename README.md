@@ -16,6 +16,6 @@
 
 ## Timeline Pengembangan
 
-- **2023**: Repository dibuat sebagai awal inisiasi proyek.
-- **Awal 2026**: Pengembangan proyek mulai dilakukan secara aktif.
-- **Pertengahan 2026**: Pengembangan aplikasi selesai.
+- **Tahun 2023**: Repository dibuat sebagai awal inisiasi proyek.
+- **Awal Tahun 2026**: Pengembangan proyek mulai dilakukan secara aktif.
+- **Pertengahan Tahun 2026**: Pengembangan aplikasi selesai.
